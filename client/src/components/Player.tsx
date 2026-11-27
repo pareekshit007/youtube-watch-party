@@ -217,8 +217,14 @@ export function Player({ syncState, isController, role, reactions, onAction, onR
         {/* click shield: nobody talks to the iframe directly, everything goes through the room */}
         <div
           className="player-shield"
-          onClick={isController ? togglePlay : undefined}
-          title={isController ? (isPlaying ? 'Pause' : 'Play') : 'Only the host or moderators control playback'}
+          onClick={viewerOnly ? undefined : togglePlay}
+          title={
+            viewerOnly
+              ? 'Viewers can only watch'
+              : isController
+                ? isPlaying ? 'Pause' : 'Play'
+                : isPlaying ? 'Click to request pause' : 'Click to request play'
+          }
         />
         {!ready && !loadError && <div className="player-overlay">Loading player…</div>}
         {loadError && (
