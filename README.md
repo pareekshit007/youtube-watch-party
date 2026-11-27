@@ -2,7 +2,7 @@
 
 Watch YouTube videos together in real time. One person creates a room, shares the code or link, and everyone's player stays in sync. Play, pause, seek and video changes go through a WebSocket server, and roles decide who's allowed to control playback.
 
-**Live demo:** https://YOUR-APP.onrender.com  <!-- replace after deploying -->
+**Live demo:** https://youtube-watch-party-ds8q.onrender.com
 
 ## Features
 
@@ -11,11 +11,20 @@ Watch YouTube videos together in real time. One person creates a room, shares th
 - Late joiners land at the right position in the current video
 - Roles: **Host**, **Moderator**, **Participant**, **Viewer**
   - Host can promote/demote, remove people, and transfer host
-  - Participants can't control playback directly. Their actions become **requests** that a host or moderator approves or declines
+  - Participants can't control playback directly. Pressing play/pause (or clicking the video), skipping ±10s, dragging the progress bar or pasting a link sends a **request** that a host or moderator approves or declines
+  - Viewers can only watch and chat
 - Permissions are checked on the server, not only in the UI
 - Refreshing the page keeps your identity and role (15s reconnect grace period)
 - If the host leaves, the longest-present moderator (or participant) becomes host
 - Chat, emoji reactions that float over the video, toasts for request results
+
+## Try it in 1 minute
+
+1. Open the live link, enter a name and click **Create a watch party**. You are the Host.
+2. Click **Copy invite** and open the link in an incognito window (or on your phone). That user joins as a Participant.
+3. As Host, press play, pause, seek or paste a new YouTube link: the other window follows.
+4. As the Participant, press play or +10: the Host gets a request in the **Requests** tab to approve or decline.
+5. In the **People** tab, the Host can make the Participant a Moderator (they can now control playback), remove them, or hand over host with 👑.
 
 ## Tech stack
 
@@ -105,7 +114,7 @@ Note: the free Render plan sleeps after inactivity, so the first request can tak
 5. Every 2 seconds each client compares its player to the expected position and corrects drift locally (no network traffic). Buffering is ignored so a slow connection doesn't get stuck in a seek loop.
 6. New joiners get the full state in the `join_room` acknowledgement, so they start at the right spot.
 
-The YouTube player is created with `controls: 0` and a transparent layer sits on top of it. All interaction goes through our own control bar. That way the app always knows *who* did something, and nobody can bypass the roles by clicking the iframe.
+The YouTube player is created with `controls: 0` and a transparent layer sits on top of it. All interaction goes through our own control bar (clicking the video toggles play/pause for hosts and moderators, and sends a request for participants). That way the app always knows *who* did something, and nobody can bypass the roles by clicking the iframe.
 
 Browsers block autoplay with sound until the user interacts with the page. Creating/joining a room is a click, which covers most cases. If the browser still blocks it, the player shows a "click to catch up" overlay.
 
